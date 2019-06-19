@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1">
+		<link href="/UPPERCASE-BOOT/R/BASE_STYLE.css" rel="stylesheet" />
+		<title>DC Faucet</title>
+	</head>
+	<body>
+		<!-- 최신 JavaScript 지원 체크 -->
+		<p id="__ES6_NOT_SUPPORTED" style="padding:15px;">JavaScript is disabled or ECMAScript 6 is not supported in your web browser.<br>Please update your web browser or use the latest version of any web browser.</p>
+        <script>const __ES6_NOT_SUPPORTED_SENTENCE=document.querySelector('#__ES6_NOT_SUPPORTED');(()=>{__ES6_NOT_SUPPORTED_SENTENCE.remove();})()</script>
+        
+		<script>
+		if (location.search !== '') {
+			let query = {};
+			location.search.slice(1).split('&').forEach((value) => {
+				let splits = value.split('=');
+				query[splits[0]] = splits.slice(1).join('=').replace(/~and~/g, '&');
+			});
+			if (query.p !== undefined) {
+				history.replaceState(undefined, undefined,
+					location.pathname.slice(0, -1) + (query.p || '') +
+					(query.q !== undefined ? ('?' + query.q) : '') +
+					location.hash
+				);
+			}
+		}
+		</script>
+		
+		<script src="/UPPERCASE-CORE/BROWSER.js"></script>
+		<!-- BOX -->
+		<script>global.oldWeb3 = global.web3;</script>
+		<script>BOX('SmartContract');</script>
+		<script src="/BOX/SmartContract/BROWSER.js"></script>
+		<script>BOX('UUI');</script>
+		<script src="/BOX/UUI/BROWSER.js"></script>
+		<script>BOX('UANI');</script>
+		<script src="/BOX/UANI/BROWSER.js"></script>
+		<script>BOX('Yogurt');</script>
+		<script src="/BOX/Yogurt/BROWSER.js"></script>
+		<!-- DCFaucet -->
+		<script>BOX('DCFaucet');</script>
+		<script src="/DCFaucet/BROWSER/Contract/DPlayCoinContract.js"></script>
+		<script src="/DCFaucet/BROWSER/Layout.js"></script>
+		<script src="/DCFaucet/BROWSER/Home.js"></script>
+		<script src="/DCFaucet/BROWSER/MAIN.js"></script>
+		
+		<script>
+		RUN(() => {
+			
+			let isUsingOldWeb3;
+			if (global.oldWeb3 !== undefined) {
+				global.web3 = global.oldWeb3;
+				global.SmartContract = SmartContractForOldWeb3;
+				isUsingOldWeb3 = true;
+			}
+			
+			SmartContract.getEthereumNetworkName((ethereumNetworkName) => {
+				
+				CONFIG.defaultBoxName = 'DCFaucet';
+				CONFIG.ethereumNetworkName = ethereumNetworkName;
+				
+				FOR_BOX((box) => {
+					if (box.OVERRIDE !== undefined) {
+						box.OVERRIDE();
+					}
+				});
+			
+				INIT_OBJECTS();
+			
+				FOR_BOX((box) => {
+					if (box.MAIN !== undefined) {
+						box.MAIN();
+					}
+				});
+			});
+		});
+		</script>
+	</body>
+</html>
