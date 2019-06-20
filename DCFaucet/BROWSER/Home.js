@@ -73,10 +73,13 @@ DCFaucet.Home = CLASS({
 		
 		SmartContract.getWalletAddress((walletAddress) => {
 			
-			DPlayCoinContract.balanceOf(walletAddress, (balance) => {
-				balanceWrapper.empty();
-				balanceWrapper.append(DPlayCoinContract.getDisplayPrice(balance));
-			});
+			if (walletAddress !== undefined) {
+				
+				DPlayCoinContract.balanceOf(walletAddress, (balance) => {
+					balanceWrapper.empty();
+					balanceWrapper.append(DPlayCoinContract.getDisplayPrice(balance));
+				});
+			}
 		});
 		
 		DCFaucet.Layout.setContent(content);
