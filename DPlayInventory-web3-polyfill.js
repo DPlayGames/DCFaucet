@@ -8,7 +8,7 @@ else if (window.web3 === undefined) {
 	
 	// DPlay 보관함 설치 안내 띄우기
 	//TODO:
-	console.log('TODO: DPlay 보관함 설치 안내 띄우기');
+	alert('DPlay 보관함을 설치해주시기 바랍니다. (https://inventory.dplay.games)');
 }
 
 else {
