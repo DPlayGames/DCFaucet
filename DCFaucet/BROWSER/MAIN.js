@@ -10,9 +10,12 @@ DCFaucet.MAIN = METHOD({
 		DPlayInventory.addChangeNetworkHandler(refresh);
 		DPlayInventory.addChangeAccountHandler(refresh);
 		
-		DCFaucet.MATCH_VIEW({
-			uri : '',
-			target : DCFaucet.Home
+		MSG.loadCSV('/DCFaucet/R/text.csv', () => {
+			
+			DCFaucet.MATCH_VIEW({
+				uri : '',
+				target : DCFaucet.Home
+			});
 		});
 	}
 });
