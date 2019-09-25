@@ -20,7 +20,7 @@ global.DPlayCoinContract = OBJECT({
 		const DECIMALS = 18;
 		
 		let getDisplayPrice = self.getDisplayPrice = (actualPrice) => {
-			return actualPrice / Math.pow(10, DECIMALS);
+			return +(actualPrice / Math.pow(10, DECIMALS)).toFixed(11);
 		};
 		
 		let getActualPrice = self.getActualPrice = (displayPrice) => {
