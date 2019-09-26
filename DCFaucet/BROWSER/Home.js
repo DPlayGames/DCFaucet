@@ -33,12 +33,12 @@ DCFaucet.Home = CLASS({
 							color : '#949191',
 							textAlign : 'right'
 						},
-						c : [SPAN({
+						c : [MSG('ETNER_DC_AMOUNT_INPUT').substring(0, MSG('ETNER_DC_AMOUNT_INPUT').indexOf('DC')), SPAN({
 							style : {
 								color : '#ab0000'
 							},
 							c : 'DC'
-						}), ' 수량 입력']
+						}), MSG('ETNER_DC_AMOUNT_INPUT').substring(MSG('ETNER_DC_AMOUNT_INPUT').indexOf('DC') + 2)]
 					}), amountInput = UUI.FULL_INPUT({
 						style : {
 							marginTop : 6,
@@ -61,13 +61,13 @@ DCFaucet.Home = CLASS({
 						style : {
 							color : '#949191'
 						},
-						c : [SPAN({
+						c : [MSG('TITLE').substring(0, MSG('TITLE').indexOf('DC')), SPAN({
 							style : {
 								color : '#ab0000',
 								fontSize : 30
 							},
 							c : 'DC'
-						}), ' Faucet']
+						}), MSG('TITLE').substring(MSG('TITLE').indexOf('DC') + 2)]
 					}), DIV({
 						style : {
 							width : 150,
@@ -81,7 +81,7 @@ DCFaucet.Home = CLASS({
 								paddingTop : 82,
 								color : '#e0dfcc'
 							},
-							c : 'DC를 받습니다.'
+							c : MSG('GET_DC_BUTTON')
 						}),
 						on : {
 							tap : () => {
@@ -99,7 +99,7 @@ DCFaucet.Home = CLASS({
 										
 										if (isNaN(amount) === true) {
 											Yogurt.Alert({
-												msg : 'DC를 입력해주세요.'
+												msg : MSG('ENTER_DC_AMOUNT_MESSAGE')
 											});
 										} else {
 											DPlayCoinContract.createDCForTest(DPlayCoinContract.getActualPrice(amount), () => {
@@ -123,7 +123,7 @@ DCFaucet.Home = CLASS({
 						},
 						c : [IMG({
 							src : '/DCFaucet/R/dc.png'
-						}), ' 계정 ID']
+						}), ' ', MSG('ACCOUNT_ID')]
 					}), amountPanel = H3({
 						style : {
 							marginTop : 10,
@@ -148,25 +148,33 @@ DCFaucet.Home = CLASS({
 		}).appendTo(BODY);
 		
 		DPlayInventory.getAccountId((accountId) => {
-			accountIdPanel.append(accountId);
 			
-			DPlayCoinContract.balanceOf(accountId, (balance) => {
+			if (accountId !== undefined) { 
 				
-				amountPanel.append(SPAN({
-					style : {
-						color : '#ab0000'
-					},
-					c : DPlayCoinContract.getDisplayPrice(balance) + ' DC'
-				}));
+				accountIdPanel.append(accountId);
 				
-				amountPanel.append(' 보유중');
-			});
+				DPlayCoinContract.balanceOf(accountId, (balance) => {
+					
+					let msg = MSG('DC_BALANCE');
+					
+					amountPanel.append(msg.substring(0, msg.indexOf('{n}')));
+					
+					amountPanel.append(SPAN({
+						style : {
+							color : '#ab0000'
+						},
+						c : msg.substring(msg.indexOf('{n}'), msg.indexOf(' DC') + 3).replace(/{n}/, DPlayCoinContract.getDisplayPrice(balance))
+					}));
+					
+					amountPanel.append(msg.substring(msg.indexOf(' DC') + 3));
+				});
+			}
 		});
 		
 		DPlayInventory.getNetworkName((networkName) => {
 			if (networkName === 'Mainnet') {
 				Yogurt.Alert({
-					msg : 'DC Faucet은 테스트넷에서만 작동하는 DC 지급 서비스입니다. 메인넷에서는 이용할 수 없습니다. 테스트 네트워크로 변경해주시기 바랍니다.'
+					msg : MSG('PLEASE_USE_TESTNET')
 				});
 			}
 		});
