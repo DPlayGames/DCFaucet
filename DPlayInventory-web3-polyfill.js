@@ -7,156 +7,310 @@ if (window.DPlayInventory !== undefined) {
 else if (window.web3 === undefined) {
 	
 	// DPlay 보관함 설치 안내 띄우기
-	//TODO:
-	alert('DPlay 보관함을 설치해주시기 바랍니다. (https://inventory.dplay.games)');
+	alert('The game needs DPlay Inventory. Please install DPlay inventory.');
+	
+	location.href = 'http://inventory.dplay.games';
 }
 
 else {
 	
-	let TO_DELETE = null;
-	
-	let SHOW_ERROR = (tag, errorMsg, params) => {
-		//REQUIRED: tag
-		//REQUIRED: errorMsg
-		//OPTIONAL: params
+	window.DPlayInventory = (() => {
 		
-		let cal = CALENDAR();
+		let TO_DELETE = null;
+		
+		let SHOW_ERROR = (tag, errorMsg, params) => {
+			//REQUIRED: tag
+			//REQUIRED: errorMsg
+			//OPTIONAL: params
 			
-		console.error(cal.getYear() + '-' + cal.getMonth(true) + '-' + cal.getDate(true) + ' ' + cal.getHour(true) + ':' + cal.getMinute(true) + ':' + cal.getSecond(true) + ' [' + tag + '] 오류가 발생했습니다. 오류 메시지: ' + errorMsg);
+			let cal = CALENDAR();
+				
+			console.error(cal.getYear() + '-' + cal.getMonth(true) + '-' + cal.getDate(true) + ' ' + cal.getHour(true) + ':' + cal.getMinute(true) + ':' + cal.getSecond(true) + ' [' + tag + '] 오류가 발생했습니다. 오류 메시지: ' + errorMsg);
+			
+			if (params !== undefined) {
+				console.error('다음은 오류를 발생시킨 파라미터입니다.');
+				console.error(JSON.stringify(params, TO_DELETE, 4));
+			}
+		};
 		
-		if (params !== undefined) {
-			console.error('다음은 오류를 발생시킨 파라미터입니다.');
-			console.error(JSON.stringify(params, TO_DELETE, 4));
-		}
-	};
+		let CHECK_IS_DATA = (target) => {
+			//OPTIONAL: target
 	
-	let CHECK_IS_DATA = (target) => {
-		//OPTIONAL: target
-
-		if (
-		target !== undefined &&
-		target !== TO_DELETE &&
-		CHECK_IS_ARRAY(target) !== true &&
-		target instanceof Date !== true &&
-		target instanceof RegExp !== true &&
-		typeof target === 'object') {
-			return true;
-		}
-
-		return false;
-	};
+			if (
+			target !== undefined &&
+			target !== TO_DELETE &&
+			CHECK_IS_ARRAY(target) !== true &&
+			target instanceof Date !== true &&
+			target instanceof RegExp !== true &&
+			typeof target === 'object') {
+				return true;
+			}
 	
-	let CHECK_IS_ARRAY = (target) => {
-		//OPTIONAL: target
-
-		if (
-		target !== undefined &&
-		target !== TO_DELETE &&
-		typeof target === 'object' &&
-		Object.prototype.toString.call(target) === '[object Array]') {
-			return true;
-		}
-
-		return false;
-	};
-	
-	let EACH = (dataOrArrayOrString, func) => {
-		//OPTIONAL: dataOrArrayOrString
-		//REQUIRED: func
-		
-		if (dataOrArrayOrString === undefined) {
 			return false;
-		}
-
-		// when dataOrArrayOrString is data
-		else if (CHECK_IS_DATA(dataOrArrayOrString) === true) {
-
-			for (let name in dataOrArrayOrString) {
-				if (dataOrArrayOrString.hasOwnProperty === undefined || dataOrArrayOrString.hasOwnProperty(name) === true) {
-					if (func(dataOrArrayOrString[name], name) === false) {
+		};
+		
+		let CHECK_IS_ARRAY = (target) => {
+			//OPTIONAL: target
+	
+			if (
+			target !== undefined &&
+			target !== TO_DELETE &&
+			typeof target === 'object' &&
+			Object.prototype.toString.call(target) === '[object Array]') {
+				return true;
+			}
+	
+			return false;
+		};
+		
+		let EACH = (dataOrArrayOrString, func) => {
+			//OPTIONAL: dataOrArrayOrString
+			//REQUIRED: func
+			
+			if (dataOrArrayOrString === undefined) {
+				return false;
+			}
+	
+			// when dataOrArrayOrString is data
+			else if (CHECK_IS_DATA(dataOrArrayOrString) === true) {
+	
+				for (let name in dataOrArrayOrString) {
+					if (dataOrArrayOrString.hasOwnProperty === undefined || dataOrArrayOrString.hasOwnProperty(name) === true) {
+						if (func(dataOrArrayOrString[name], name) === false) {
+							return false;
+						}
+					}
+				}
+			}
+	
+			// when dataOrArrayOrString is func
+			else if (func === undefined) {
+	
+				func = dataOrArrayOrString;
+				dataOrArrayOrString = undefined;
+	
+				return (dataOrArrayOrString) => {
+					return EACH(dataOrArrayOrString, func);
+				};
+			}
+	
+			// when dataOrArrayOrString is array or string
+			else {
+	
+				let length = dataOrArrayOrString.length;
+	
+				for (let i = 0; i < length; i += 1) {
+	
+					if (func(dataOrArrayOrString[i], i) === false) {
 						return false;
 					}
-				}
-			}
-		}
-
-		// when dataOrArrayOrString is func
-		else if (func === undefined) {
-
-			func = dataOrArrayOrString;
-			dataOrArrayOrString = undefined;
-
-			return (dataOrArrayOrString) => {
-				return EACH(dataOrArrayOrString, func);
-			};
-		}
-
-		// when dataOrArrayOrString is array or string
-		else {
-
-			let length = dataOrArrayOrString.length;
-
-			for (let i = 0; i < length; i += 1) {
-
-				if (func(dataOrArrayOrString[i], i) === false) {
-					return false;
-				}
-
-				// when shrink
-				if (dataOrArrayOrString.length < length) {
-					i -= length - dataOrArrayOrString.length;
-					length -= length - dataOrArrayOrString.length;
-				}
-
-				// when stretch
-				else if (dataOrArrayOrString.length > length) {
-					length += dataOrArrayOrString.length - length;
-				}
-			}
-		}
-
-		return true;
-	};
 	
-	let STRINGIFY = (data) => {
-		//REQUIRED: data
+					// when shrink
+					if (dataOrArrayOrString.length < length) {
+						i -= length - dataOrArrayOrString.length;
+						length -= length - dataOrArrayOrString.length;
+					}
+	
+					// when stretch
+					else if (dataOrArrayOrString.length > length) {
+						length += dataOrArrayOrString.length - length;
+					}
+				}
+			}
+	
+			return true;
+		};
 		
-		if (CHECK_IS_DATA(data) === true) {
-			return JSON.stringify(PACK_DATA(data));
-		}
-		
-		else if (CHECK_IS_ARRAY(data) === true) {
-			
-			let f = (array) => {
-				
-				let newArray = [];
-				
-				EACH(array, (data) => {
-					if (CHECK_IS_DATA(data) === true) {
-						newArray.push(PACK_DATA(data));
-					} else if (CHECK_IS_ARRAY(data) === true) {
-						newArray.push(f(data));
-					} else {
-						newArray.push(data);
+		let EXTEND = (params) => {
+			//REQUIRED: params
+			//REQUIRED: params.origin	기존 데이터나 배열
+			//REQUIRED: params.extend	덧붙힐 데이터나 배열
+	
+			let origin = params.origin;
+			let extend = params.extend;
+	
+			if (CHECK_IS_DATA(origin) === true) {
+	
+				EACH(extend, (value, name) => {
+					
+					if ( value instanceof Date === true) {
+						origin[name] = new Date(value.getTime());
+					}
+					
+					else if ( value instanceof RegExp === true) {
+						
+						let pattern = value.toString();
+						let flags;
+						
+						for (let i = pattern.length - 1; i >= 0; i -= 1) {
+							if (pattern[i] === '/') {
+								flags = pattern.substring(i + 1);
+								pattern = pattern.substring(1, i);
+								break;
+							}
+						}
+						
+						origin[name] = new RegExp(pattern, flags);
+					}
+					
+					else if (CHECK_IS_DATA(value) === true || CHECK_IS_ARRAY(value) === true) {
+						origin[name] = COPY(value);
+					}
+					
+					else {
+						origin[name] = value;
 					}
 				});
-				
-				return newArray;
-			};
-			
-			return JSON.stringify(f(data));
-		}
-		
-		else {
-			return JSON.stringify(data);
-		}
-	};
+			}
 	
-	window.DPlayInventory = (() => {
+			else if (CHECK_IS_ARRAY(origin) === true) {
+	
+				EACH(extend, (value) => {
+	
+					if ( value instanceof Date === true) {
+						origin.push(new Date(value.getTime()));
+					}
+					
+					else if ( value instanceof RegExp === true) {
+						
+						let pattern = value.toString();
+						let flags;
+						
+						for (let i = pattern.length - 1; i >= 0; i -= 1) {
+							if (pattern[i] === '/') {
+								flags = pattern.substring(i + 1);
+								pattern = pattern.substring(1, i);
+								break;
+							}
+						}
+						
+						origin.push(new RegExp(pattern, flags));
+					}
+					
+					else if (CHECK_IS_DATA(value) === true || CHECK_IS_ARRAY(value) === true) {
+						origin.push(COPY(value));
+					}
+					
+					else {
+						origin.push(value);
+					}
+				});
+			}
+	
+			return origin;
+		};
+		
+		let COPY = (dataOrArray) => {
+			//REQUIRED: dataOrArray
+			
+			let copy;
+			
+			if (CHECK_IS_DATA(dataOrArray) === true) {
+	
+				copy = {};
+	
+				EXTEND({
+					origin : copy,
+					extend : dataOrArray
+				});
+			}
+	
+			else if (CHECK_IS_ARRAY(dataOrArray) === true) {
+	
+				copy = [];
+	
+				EXTEND({
+					origin : copy,
+					extend : dataOrArray
+				});
+			}
+	
+			return copy;
+		};
+		
+		let PACK_DATA = (data) => {
+			//REQUIRED: data
+	
+			let result = COPY(data);
+			let dateNames = [];
+			let regexNames = [];
+	
+			EACH(result, (value, name) => {
+	
+				if (value instanceof Date === true) {
+	
+					// change to timestamp integer.
+					result[name] = INTEGER(value.getTime());
+					dateNames.push(name);
+				}
+				
+				else if (value instanceof RegExp === true) {
+	
+					// change to string.
+					result[name] = value.toString();
+					regexNames.push(name);
+				}
+	
+				else if (CHECK_IS_DATA(value) === true) {
+					result[name] = PACK_DATA(value);
+				}
+	
+				else if (CHECK_IS_ARRAY(value) === true) {
+	
+					EACH(value, (v, i) => {
+	
+						if (CHECK_IS_DATA(v) === true) {
+							value[i] = PACK_DATA(v);
+						}
+					});
+				}
+			});
+	
+			result.__D = dateNames;
+			result.__R = regexNames;
+	
+			return result;
+		};
+		
+		let STRINGIFY = (data) => {
+			//REQUIRED: data
+			
+			if (CHECK_IS_DATA(data) === true) {
+				return JSON.stringify(PACK_DATA(data));
+			}
+			
+			else if (CHECK_IS_ARRAY(data) === true) {
+				
+				let f = (array) => {
+					
+					let newArray = [];
+					
+					EACH(array, (data) => {
+						if (CHECK_IS_DATA(data) === true) {
+							newArray.push(PACK_DATA(data));
+						} else if (CHECK_IS_ARRAY(data) === true) {
+							newArray.push(f(data));
+						} else {
+							newArray.push(data);
+						}
+					});
+					
+					return newArray;
+				};
+				
+				return JSON.stringify(f(data));
+			}
+			
+			else {
+				return JSON.stringify(data);
+			}
+		};
+		
 		let self = {};
 		
 		let contracts = {};
 		let methodMap = {};
+		let eventMap = {};
 		
 		// 이더리움 네트워크 이름을 가져옵니다.
 		let getNetworkName = self.getNetworkName = (callback) => {
@@ -189,7 +343,10 @@ else {
 		};
 		
 		// 보관함에 로그인합니다.
-		let login = self.login = (callback) => {
+		let login = self.login = (params, callback) => {
+			//REQUIRED: params
+			//REQUIRED: params.icon
+			//REQUIRED: params.title
 			//OPTIONAL: callback
 			
 			ethereum.enable().then(() => {
@@ -232,7 +389,7 @@ else {
 					// 오류 발생
 					if (error !== TO_DELETE) {
 						if (errorHandler === undefined) {
-							SHOW_ERROR('DPlayInventory.sign (web3.js polyfill)', error.toString(), text);
+							SHOW_ERROR('DPlayInventory.signText (web3.js polyfill)', error.toString(), text);
 						} else {
 							errorHandler(error.toString());
 						}
@@ -345,9 +502,22 @@ else {
 						
 						EACH(info.args, (value, name) => {
 							
+							let type;
+							
+							EACH(eventMap[address][info.event].inputs, (input) => {
+								if (input.name === name) {
+									type = input.type;
+								}
+							});
+							
 							// 숫자인 경우
 							if (value.toNumber !== undefined) {
 								args[name] = value.toNumber();
+							}
+							
+							// 주소인 경우
+							else if (type === 'address') {
+								args[name] = web3.toChecksumAddress(value);
 							}
 						});
 						
@@ -357,10 +527,13 @@ else {
 			}
 			
 			let methods = methodMap[address] = {};
+			let events = eventMap[address] = {};
 			
 			// 메소드 분석 및 생성
 			EACH(abi, (methodInfo) => {
-				if (methodInfo.type === 'function') {
+				if (methodInfo.type === 'event') {
+					events[methodInfo.name] = methodInfo;
+				} else if (methodInfo.type === 'function') {
 					methods[methodInfo.name] = methodInfo;
 				}
 			});
@@ -586,6 +759,7 @@ else {
 			//REQUIRED: params.params
 			//REQUIRED: callbackOrHandlers
 			//OPTIONAL: callbackOrHandlers.error
+			//OPTIONAL: callbackOrHandlers.transactionHash
 			//REQUIRED: callbackOrHandlers.success
 			
 			let address = _params.address;
@@ -607,7 +781,7 @@ else {
 			let contract = contracts[address];
 			let methods = methodMap[address];
 			
-			if (contract !== undefined && methods !== undefined) {
+			if (contract !== undefined && methods !== undefined && methods[methodName] !== undefined) {
 				
 				let methodInfo = methods[methodName];
 				
@@ -718,6 +892,10 @@ else {
 					run();
 				}
 			}
+		};
+		
+		let checkIsPolyfill = self.checkIsPolyfill = () => {
+			return true;
 		};
 		
 		return self;
