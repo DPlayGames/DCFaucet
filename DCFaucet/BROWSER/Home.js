@@ -143,6 +143,24 @@ DCFaucet.Home = CLASS({
 							textAlign : 'center'
 						}
 					})]
+				}),
+				
+				UUI.V_CENTER({
+					style : {
+						marginTop : -25,
+						width : 104,
+						height : 27,
+						backgroundImage : '/DCFaucet/R/etherbutton.png',
+						cursor : 'pointer',
+						textAlign : 'center',
+						color : '#979b9b'
+					},
+					c : MSG('CHARGE_ETHER_BUTTON'),
+					on : {
+						tap : () => {
+							open('http://chargeether.dplay.games');
+						}
+					}
 				})]
 			})
 		}).appendTo(BODY);
