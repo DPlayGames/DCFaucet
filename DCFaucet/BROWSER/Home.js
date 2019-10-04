@@ -181,10 +181,21 @@ DCFaucet.Home = CLASS({
 						style : {
 							color : '#ab0000'
 						},
-						c : msg.substring(msg.indexOf('{n}'), msg.indexOf(' DC') + 3).replace(/{n}/, DPlayCoinContract.getDisplayPrice(balance))
+						c : DPlayCoinContract.getDisplayPrice(balance)
 					}));
 					
-					amountPanel.append(msg.substring(msg.indexOf(' DC') + 3));
+					msg = msg.substring(msg.indexOf('{n}') + 3);
+					
+					amountPanel.append(msg.substring(0, msg.indexOf('DC')));
+					
+					amountPanel.append(SPAN({
+						style : {
+							color : '#ab0000'
+						},
+						c : 'DC'
+					}));
+					
+					amountPanel.append(msg.substring(msg.indexOf('DC') + 2));
 				});
 			}
 		});
