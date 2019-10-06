@@ -145,23 +145,20 @@ DCFaucet.Home = CLASS({
 					})]
 				}),
 				
-				UUI.V_CENTER({
+				A({
 					style : {
-						marginTop : -25,
-						width : 104,
-						height : 27,
-						backgroundImage : '/DCFaucet/R/etherbutton.png',
-						cursor : 'pointer',
-						textAlign : 'center',
-						color : '#979b9b'
+						flt : 'left',
+						display : 'block',
+						marginTop : -17,
+						color : '#646868',
+						textDecoration : 'underline'
 					},
-					c : MSG('CHARGE_ETHER_BUTTON'),
-					on : {
-						tap : () => {
-							open('http://chargeether.dplay.games');
-						}
-					}
-				})]
+					target : '_blank',
+					href : 'http://chargeether.dplay.games',
+					c : MSG('CHARGE_ETHER_BUTTON')
+				}),
+				
+				CLEAR_BOTH()]
 			})
 		}).appendTo(BODY);
 		
