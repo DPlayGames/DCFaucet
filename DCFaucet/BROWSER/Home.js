@@ -102,8 +102,18 @@ DCFaucet.Home = CLASS({
 												msg : MSG('ENTER_DC_AMOUNT_MESSAGE')
 											});
 										} else {
-											DPlayCoinContract.createDCForTest(DPlayCoinContract.getActualPrice(amount), () => {
-												REFRESH();
+											
+											DPlayCoinContract.createDCForTest(DPlayCoinContract.getActualPrice(amount), {
+												
+												transactionHash : () => {
+													Yogurt.Alert({
+														msg : MSG('SENDING_DC_ALERT')
+													});
+												},
+												
+												success : () => {
+													REFRESH();
+												}
 											});
 										}
 									}
