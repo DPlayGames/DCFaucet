@@ -164,7 +164,9 @@ DCFaucet.Home = CLASS({
 		
 		DPlayInventory.getAccountId((accountId) => {
 			
-			if (accountId !== undefined) { 
+			if (accountId === undefined) {
+				DPlayInventory.login(REFRESH);
+			} else {
 				
 				accountIdPanel.append(accountId);
 				
